@@ -31,7 +31,7 @@ class UseSignIn(Resource):
         result = User.query.filter_by(email=email).first()
         if result:
             if result.password == password:
-                return {"message":"login"}
+                return {"message":"login", "currentUserId": result.user_id, "currentUserName": result.username, "currentUserEmail": result.email, "currentUserPhoneNumber": result.phoneNumber}
         return {"message":"not login"} 
 
 #signup or register
@@ -68,6 +68,15 @@ class Plants(Resource):
         db.session.add(userPlant)
         db.session.commit()
         return new_user
+
+    @marshal_with(plant_fields)
+    def put(self,user_id):
+        plant = Plant.query.filter_by(name=request.json['name']).first()
+        plant.approved = request.json['approved']
+
+        db.session.commit()
+        result=Plant.query.filter_by(name=request.json['name']).first()
+        return result
 
 class AllPlant(Resource):
     @marshal_with(plant_fields)
@@ -120,6 +129,13 @@ class UserSearch(Resource):
             return results
         return {"result": "not found"}
 
+class PendingPlants(Resource):
+    @marshal_with(plant_fields)
+    def get(self):
+        results = Plant.query.filter_by(approved="pending").all()
+        if results:
+            return results
+        return {"message": "No pending approval"}
 
 
 
@@ -131,6 +147,7 @@ api.add_resource(OnePlant, '/api/v1/user/oneplants/<id>')
 api.add_resource(BuyPlant, '/api/v1/user/buyplants/<user_id>')
 api.add_resource(GetPosted, '/api/v1/user/getplants/<user_id>')
 api.add_resource(UserSearch, '/api/v1/user/searchplants/<search_term>')
+api.add_resource(PendingPlants, '/api/v1/plants')
 
 
 
