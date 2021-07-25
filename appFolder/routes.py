@@ -3,6 +3,7 @@ from flask_restful import Api, Resource, reqparse, abort, fields, marshal_with
 from appFolder.models import User, Plant, UserPlant
 from werkzeug.security import generate_password_hash, check_password_hash
 from appFolder import app, db, api
+import json
 
 resource_fields = {
     'user_id': fields.Integer,
@@ -130,12 +131,24 @@ class UserSearch(Resource):
         return {"result": "not found"}
 
 class PendingPlants(Resource):
-    @marshal_with(plant_fields)
+    # @marshal_with(plant_fields)
     def get(self):
         results = Plant.query.filter_by(approved="pending").all()
-        if results:
-            return results
-        return {"message": "No pending approval"}
+        if results != []:
+            resultsJson = []
+            for result in results:
+                resultsJson.append({
+                    'plant_id': result.plant_id,
+                    'name': result.name,
+                    'location': result.location,
+                    'use': result.use,
+                    'imagePath': result.imagePath,
+                    'user_id': result.user_id,
+                    'approved': result.approved,
+                    'price': result.price
+                })
+            return jsonify(resultsJson)
+        return []
 
 
 
