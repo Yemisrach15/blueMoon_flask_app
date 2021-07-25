@@ -23,7 +23,8 @@ class Plant(db.Model):
     location = db.Column(db.String(100), nullable=False)
     use = db.Column(db.String(), nullable=False)
     imagePath = db.Column(db.String(100), nullable=False)
-    approved = db.Column(db.String(100), nullable=False)
+    approved = db.Column(db.String(100), nullable=False, default="pending")
+    price = db.Column(db.Float, default=32, nullable=True)
     user_id = db.Column(db.Integer, nullable=False)#db.ForeignKey('user.user_id'), 
     #getPlant = db.relationship('UserPlant', backref='get plant', lazy=True)
 

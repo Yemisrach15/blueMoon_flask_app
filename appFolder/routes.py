@@ -18,7 +18,8 @@ plant_fields = {
     'use': fields.String,
     'imagePath': fields.String,
     'user_id': fields.String,
-    'approved': fields.String
+    'approved': fields.String,
+    'price': fields.Float,
 }
 
 #signin or login
@@ -56,7 +57,6 @@ class Plants(Resource):
         new_user.location = request.json['location']
         new_user.use = request.json['use']
         new_user.imagePath = request.json['imagePath']
-        new_user.approved = request.json['approved']
         new_user.user_id = user_id
 
         db.session.add(new_user)
